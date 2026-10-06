@@ -1,0 +1,50 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: false
+      routes:
+        # 用户服务
+        - id: user-service
+          uri: lb://user-service
+          predicates:
+            - Path=/api/user/**
+          filters:
+            - StripPrefix=2
+        # 喂猫服务
+        - id: service-service
+          uri: lb://service-service
+          predicates:
+            - Path=/api/service/**
+          filters:
+            - StripPrefix=2
+        # 订单服务
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/api/order/**
+          filters:
+            - StripPrefix=2
+        # 支付服务
+        - id: pay-service
+          uri: lb://pay-service
+          predicates:
+            - Path=/api/pay/**
+          filters:
+            - StripPrefix=2
+        # 消息服务
+        - id: msg-service
+          uri: lb://msg-service
+          predicates:
+            - Path=/api/msg/**
+          filters:
+            - StripPrefix=2

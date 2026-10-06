@@ -1,0 +1,71 @@
+server:
+  port: 8003
+
+spring:
+  application:
+    name: order-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    sentinel:
+      transport:
+        dashboard: localhost:8085
+        port: 8719
+      eager: true
+  # MySQL 数据源
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/petsitter?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: root
+  # Redis（分布式锁）
+  redis:
+    host: localhost
+    port: 6379
+    database: 0
+    timeout: 3000ms
+  # RabbitMQ（下单消息）
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-confirm-type: correlated
+    publisher-returns: true
+
+# MyBatis-Plus
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: isDeleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
+# OpenFeign：开启 Sentinel 熔断降级支持
+feign:
+  sentinel:
+    enabled: true
+
+# Seata AT 分布式事务配置（tx-service-group 必须与 service-service 完全一致）
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: petsitter_tx_group
+  service:
+    vgroup-mapping:
+      petsitter_tx_group: default
+    grouplist:
+      default: localhost:8091
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: localhost:8848
+      group: SEATA_GROUP
+      namespace: ""

@@ -1,0 +1,23 @@
+server:
+  port: 8005
+
+spring:
+  application:
+    name: msg-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+  # RabbitMQ（消费下单消息）
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    listener:
+      simple:
+        # 手动确认：处理成功才 ACK，失败可重回队列，避免消息丢失
+        acknowledge-mode: manual
+        # 每次只取一条，处理完再取下一条
+        prefetch: 1
